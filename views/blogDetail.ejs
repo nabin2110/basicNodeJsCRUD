@@ -1,0 +1,11 @@
+<%- include('./components/header') %>
+  <div class="container">
+    <h1>Title:<%- singleblog.title %></h1>
+    <h2>Sub Title:<%- singleblog.sub_title %></h2>
+    <p>Description:<%- singleblog.description %></p>
+    <p>Published At: <%- singleblog.createdAt.toISOString().slice(0,10) %></p>
+    <a href="/deleteblogs/<%- singleblog.id %>" onClick="return confirm('are you sure you want to delete this?')">Delete</a>
+    <a href="/editblogs/<%- singleblog.id  %>">Update</a>
+  </div>
+</body>
+</html>

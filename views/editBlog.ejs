@@ -1,0 +1,21 @@
+<%- include('./components/header') %>  
+  <div class="container">
+    <h1>Update Form</h1>
+    <form action="/updateblogs/<%- editblogs.id %>" method="POST">
+      <div>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required value="<%- editblogs.title %>">
+      </div>
+      <div>
+        <label for="sub_title">Sub title:</label>
+        <input type="text" id="sub_title" name="sub_title" required value="<%- editblogs.sub_title %>">
+      </div>
+      <div>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required><%- editblogs.description %></textarea>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</body>
+</html>

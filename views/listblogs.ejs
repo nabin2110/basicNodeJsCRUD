@@ -1,0 +1,18 @@
+<%- include('./components/header') %>
+    <div class="container">
+    <h1>List Blogs</h1>
+  
+    <div class="card">
+      <% blogs.length>0 && blogs.forEach((value, index, array) => { %>
+        <div class="card-content">
+          <h2><%- value.title %></h2>
+          <h3><%- value.sub_title %></h3>
+          <p><%- value.description %></p>
+          <a href="/blogdetail/<%- value.id %>">Read more</a>
+        </div>
+     <% }) %>
+    </div>
+    <!-- Repeat this card structure for each blog entry -->
+  </div>
+</body>
+</html>
