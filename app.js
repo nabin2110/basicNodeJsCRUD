@@ -1,7 +1,11 @@
 const express = require('express');
-const { blogs } = require('./model/index');
+const bcrypt = require('bcryptjs')
+//database ma vako table lai import gareko from model
+const { blogs,users } = require('./model/index');
 const app =express();
 
+
+//parse incoming form data
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.set('view engine','ejs');
@@ -82,65 +86,43 @@ app.post('/updateblogs/:id',async(req,res)=>{
     // })
     res.redirect('/')
 })
+app.get("/register",(req,res)=>{
+        res.render('register');
+});
+app.post('/register',async(req,res)=>{
+    const {username,email,password} = req.body;
+    await users.create({
+        username:username,
+        email:email,
+        password:bcrypt.hashSync(password,8)
+    })
+    res.redirect('/login')
+})
+app.post('/login',async(req,res)=>{
+    const {email,password} = req.body;
+   const emailChecked = await users.findAll({
+        where:{
+            email:email,
+        }
+    })
+    if(emailChecked.length>0){
+        const isMatch = bcrypt.compareSync(password,emailChecked[0].password)
+        if(isMatch){
+            res.redirect('/');
+        }else{
+            res.redirect('/login')
+        }
+    }else{
+        res.redirect('/login')
+    }
+    
+})
+//login 
+
+app.get("/login",(req,res)=>{
+    res.render('login')
+})
+//port 
 app.listen(3000,()=>{
     console.log('connected successfully');
 })
-
-// [
-//     blog {
-//       dataValues: {
-//         id: 1,
-//         title: 'hello',
-//         sub_title: 'hello',
-//         description: 'hello',
-//         createdAt: 2024-04-03T11:01:40.000Z,
-//         updatedAt: 2024-04-03T11:01:40.000Z
-//       },
-//       _previousDataValues: {
-//         id: 1,
-//         title: 'hello',
-//         sub_title: 'hello',
-//         description: 'hello',
-//         createdAt: 2024-04-03T11:01:40.000Z,
-//         updatedAt: 2024-04-03T11:01:40.000Z
-//       },
-//       uniqno: 1,
-//       _changed: Set(0) {},
-//       _options: {
-//         isNewRecord: false,
-//         _schema: null,
-//         _schemaDelimiter: '',
-//         raw: true,
-//         attributes: [Array]
-//       },
-//       isNewRecord: false
-//     },
-//     blog {
-//       dataValues: {
-//         id: 2,
-//         title: 'sfdsadf',
-//         sub_title: 'fas',
-//         description: 'asdfsaf',
-//         createdAt: 2024-04-03T11:02:19.000Z,
-//         updatedAt: 2024-04-03T11:02:19.000Z
-//       },
-//       _previousDataValues: {
-//         id: 2,
-//         title: 'sfdsadf',
-//         sub_title: 'fas',
-//         description: 'asdfsaf',
-//         createdAt: 2024-04-03T11:02:19.000Z,
-//         updatedAt: 2024-04-03T11:02:19.000Z
-//       },
-//       uniqno: 1,
-//       _changed: Set(0) {},
-//       _options: {
-//         isNewRecord: false,
-//         _schema: null,
-//         _schemaDelimiter: '',
-//         raw: true,
-//         attributes: [Array]
-//       },
-//       isNewRecord: false
-//     }
-//   ]

@@ -1,0 +1,19 @@
+<%- include('./components/header') %>
+    <div class="container">
+    <h1>Login</h1>
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label for="email">email</label>
+                <input type="email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="password">password</label>
+                <input type="password" name="password">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <span>Don't you have an account?<a href="/register">Register</a></span>
+    <!-- Repeat this card structure for each blog entry -->
+  </div>
+</body>
+</html>
