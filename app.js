@@ -1,21 +1,22 @@
 const express = require('express');
 const bcrypt = require('bcryptjs')
+const {multer,storage} = require('./middleware/multerConfig.js');
 //database ma vako table lai import gareko from model
 const { blogs,users } = require('./model/index');
 const app =express();
-
+const upload = multer({storage:storage})
 
 //parse incoming form data
-app.use(express.json());
-app.use(express.urlencoded({extended:true}))
+app.use(express.json()); //content-Type : application/json handle 
+app.use(express.urlencoded({extended:true})) //content-Type :application/x-www-form-urlencoded handle 
 app.set('view engine','ejs');
 
 app.use(express.static('public/'))
+app.use(express.static('uploads/'))
 //database connection
-require('./model/index')
 //jati bela pani kei kura database ma halnu chha or kei kura database sanga interact garera garnu chha vane teti bela sadhai async await use garnu parcha
 app.get('/',async(req,res)=>{
-    const allBlogs =await blogs.findAll();
+    const allBlogs = await blogs.findAll();
     console.log(allBlogs)
     res.render('listblogs',{blogs:allBlogs})
 })
@@ -40,12 +41,16 @@ app.get(`/blogdetail/:id`,async(req,res)=>{
 app.get('/createblogs',(req,res)=>{
     res.render('createblogs');
 })
-app.post('/createblogs',async(req,res)=>{
+
+//upload.single("image") j ejs ko file ko name ma chha tei dinu parne huncha single ko vitra
+app.post('/createblogs',upload.single('image'),async(req,res)=>{
     const {title,sub_title,description}=req.body;
+    console.log(req.file.originalname);
    await blogs.create({
         title:title,
         sub_title:sub_title,
-        description:description
+        description:description,
+        image:req.file.filename
     })
     res.redirect('/')
 })
@@ -114,8 +119,7 @@ app.post('/login',async(req,res)=>{
         }
     }else{
         res.redirect('/login')
-    }
-    
+    }   
 })
 //login 
 
