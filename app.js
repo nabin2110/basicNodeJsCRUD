@@ -5,7 +5,7 @@ const {multer,storage} = require('./middleware/multerConfig.js');
 const { blogs,users } = require('./model/index');
 const app =express();
 const upload = multer({storage:storage})
-
+const fs= require('fs')
 //parse incoming form data
 app.use(express.json()); //content-Type : application/json handle 
 app.use(express.urlencoded({extended:true})) //content-Type :application/x-www-form-urlencoded handle 
@@ -45,7 +45,6 @@ app.get('/createblogs',(req,res)=>{
 //upload.single("image") j ejs ko file ko name ma chha tei dinu parne huncha single ko vitra
 app.post('/createblogs',upload.single('image'),async(req,res)=>{
     const {title,sub_title,description}=req.body;
-    console.log(req.file.originalname);
    await blogs.create({
         title:title,
         sub_title:sub_title,
@@ -56,12 +55,17 @@ app.post('/createblogs',upload.single('image'),async(req,res)=>{
 })
 app.get('/deleteblogs/:id',async(req,res)=>{
     const {id} = req.params;
+    const record = await blogs.findByPk(id);
      const deletedBlogs = await blogs.destroy({
         where:{
             id:id,
         }
     });
-    console.log(typeof deletedBlogs)
+    if(record.image){
+        fs.unlink('./uploads/'+record.image,(err)=>{
+            console.log(err)
+        })
+    }
      if(deletedBlogs){
          res.redirect('/')
      }
@@ -71,10 +75,25 @@ app.get('/editblogs/:id',async(req,res)=>{
     const editblogs = await blogs.findByPk(id);
     res.render('editBlog',{editblogs})
 })
-app.post('/updateblogs/:id',async(req,res)=>{
+app.post('/updateblogs/:id',upload.single('image'),async(req,res)=>{
     const {id} = req.params;
     // first approach
-    await  blogs.update(req.body,{
+    const editblogs = await blogs.findByPk(id);
+    let filename;
+    if(req.file){
+        //dynamically deleting
+        fs.unlink('./uploads/'+editblogs.image,(err)=>{
+                console.log('something went wrong')
+            })
+        filename = req.file.filename;
+    }
+    const {title,sub_title,description} = req.body;
+    await  blogs.update({
+        title,
+        sub_title,
+        description,
+        image:filename??editblogs.image
+    },{
         where:{
             id:id
         }

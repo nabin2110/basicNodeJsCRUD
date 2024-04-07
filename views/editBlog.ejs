@@ -1,7 +1,7 @@
 <%- include('./components/header') %>  
   <div class="container">
     <h1>Update Form</h1>
-    <form action="/updateblogs/<%- editblogs.id %>" method="POST">
+    <form action="/updateblogs/<%- editblogs.id %>" method="POST" enctype="multipart/form-data" novalidate>
       <div>
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" required value="<%- editblogs.title %>">
@@ -9,6 +9,13 @@
       <div>
         <label for="sub_title">Sub title:</label>
         <input type="text" id="sub_title" name="sub_title" required value="<%- editblogs.sub_title %>">
+      </div>
+      <div>
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image">
+        <div class="image_file">
+          <img src="<%- 'http://localhost:3000/'+editblogs.image  %>" alt="<%- editblogs.title  %>" width="300px" height="300px">
+        </div>
       </div>
       <div>
         <label for="description">Description:</label>
